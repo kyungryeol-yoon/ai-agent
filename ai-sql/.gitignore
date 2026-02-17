@@ -1,0 +1,10 @@
+# ChromaDB persistence directory (default)
+/chroma/
+
+# Other common Chroma-related files/directories
+chroma_db
+
+# Environment files (general practice)
+.env
+.venv
+venv
