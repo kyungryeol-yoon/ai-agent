@@ -97,15 +97,15 @@ ollama pull llama3
 
 ```bash
 # 핵심 라이브러리 설치
-pip install langchain langchain-ollama langchain-huggingface langchain-community \
-            chromadb streamlit sentence-transformers langgraph
+pip install langchain langchain-openai langchain-ollama langchain-huggingface \
+            langchain-community chromadb streamlit langgraph sentence-transformers
 
 ```
 
 ### 3. 서비스 실행
 
 ```bash
-streamlit run main.py
+streamlit run main.py --server.address 0.0.0.0 --server.port 5415
 
 ```
 

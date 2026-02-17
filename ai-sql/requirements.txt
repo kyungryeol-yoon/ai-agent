@@ -1,7 +1,9 @@
 langchain
 langchain-ollama
 langchain-community
-chromadb
 streamlit
 langchain-huggingface
 sentence-transformers
+langgraph
+langchain-openai
+langchain-chroma
