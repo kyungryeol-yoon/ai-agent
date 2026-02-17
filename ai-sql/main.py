@@ -1,22 +1,23 @@
-from langchain_ollama import OllamaEmbeddings
-from langchain_community.vectorstores import Chroma
-from langchain_core.documents import Document
+import streamlit as st
+from models import get_models
+from database import sync_swagger
+from graph import create_app
 
-# 1. Embedding 모델 설정 (Ollama 사용)
-embeddings = OllamaEmbeddings(model="nomic-embed-text")
+embeddings, llm = get_models()
+app = create_app(embeddings, llm)
 
-# 2. 예시 데이터 (문서화)
-docs = [
-    Document(page_content="LangChain은 LLM 애플리케이션을 개발하기 위한 프레임워크입니다."),
-    Document(page_content="LangGraph는 순환 그래프를 통해 상태 보존형 에이전트를 구축하게 해줍니다."),
-    Document(page_content="Vector DB는 고차원 벡터 데이터를 저장하고 검색하는 데 최적화되어 있습니다.")
-]
+st.title("🛡️ 지능형 API 어시스턴트")
 
-# 3. Vector DB 생성 및 저장 (로컬 Chroma DB)
-vectorstore = Chroma.from_documents(
-    documents=docs, 
-    embedding=embeddings,
-    collection_name="local-rag"
-)
+# 사이드바에서 데이터 동기화
+with st.sidebar:
+    url = st.text_input("Swagger URL")
+    if st.button("동기화"):
+        count = sync_swagger(url, embeddings)
+        st.success(f"{count}개 API 로드 완료")
 
-print("Vector DB 구축 완료!")
+# 메인 채팅창
+if prompt := st.chat_input("질문하세요"):
+    st.chat_message("user").write(prompt)
+    with st.chat_message("assistant"):
+        result = app.invoke({"question": prompt, "iteration": 0})
+        st.write(result["generation"])

@@ -105,14 +105,8 @@ pip install langchain langchain-ollama langchain-huggingface langchain-community
 ### 3. 서비스 실행
 
 ```bash
-streamlit run app.py
+streamlit run main.py
 
 ```
-
----
-
-## 💡 전문가 총평 및 제언
-
-> 본 시스템은 **"문서화(Documentation)가 곧 AI 학습(Learning)"**으로 이어지는 선순환 구조를 만듭니다. 향후 Swagger JSON을 매일 새벽마다 자동으로 스캔하여 Vector DB를 업데이트하는 **자동 갱신 파이프라인(Auto-sync)**을 추가한다면, 개발자가 별도의 작업을 하지 않아도 AI가 항상 최신 API 명세를 가이드하는 완벽한 기술 비서가 될 것입니다.
 
 ---
