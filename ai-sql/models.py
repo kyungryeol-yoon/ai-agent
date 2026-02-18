@@ -2,7 +2,7 @@ from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 from langchain_huggingface import HuggingFaceEmbeddings
 
-# 텍스트를 숫자로 바꾸는 모델(BGE-M3)을 로드 . 한 번 로드하면 Vector DB에 저장할 때와 검색할 때 동일하게 사용
+# 텍스트를 숫자로 바꾸는 모델(BGE-M3)을 로드. 한 번 로드하면 Vector DB에 저장할 때와 검색할 때 동일하게 사용
 def get_embeddings():
     return HuggingFaceEmbeddings(
         model_name="BAAI/bge-m3",

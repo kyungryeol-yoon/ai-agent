@@ -110,3 +110,9 @@ streamlit run main.py --server.address 0.0.0.0 --server.port 5415
 ```
 
 ---
+
+## 🛠️ 요약하자면:
+
+* **데이터가 들어올 때:** main.py -> database.py -> models.py(Embedding) 순으로 작동.
+* **질문을 던졌을 때:** main.py -> graph.py(워크플로우 가동) -> models.py(LLM) 순으로 작동.
+* 이 구조는 협업 시에도 유리합니다. 예를 들어, "답변을 더 친절하게 바꾸고 싶어"라면 **graph.py**의 프롬프트만 고치면 되고, "데이터 저장 방식을 바꾸고 싶어"라면 **database.py**만 고치면 됩니다.
