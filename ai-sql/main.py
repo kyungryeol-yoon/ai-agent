@@ -38,7 +38,7 @@ st.caption("Swagger 문서를 바탕으로 AI가 판단하고 답변합니다.")
 
 # 모델 로드 (캐싱을 통해 속도 향상 가능하나 여기선 직관적으로 표현)
 embeddings = get_embeddings(api_url, api_key)
-llm = get_llm_engine(llm_type, m_name, api_url, api_key)
+llm = get_llm_engine(m_name, api_url, api_key)
 app = create_retrieval_graph(embeddings, llm)
 
 # st.session_state.messages: 대화 기록을 유지합니다. Streamlit은 새로고침이 잦기 때문에 이 변수에 기록을 쌓아두어야 대화가 끊기지 않습니다.

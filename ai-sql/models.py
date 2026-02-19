@@ -20,14 +20,16 @@ def get_embeddings(api_url=None, api_key=None):
 # 전략 패턴(Strategy Pattern)이 적용
 # 사용자가 UI에서 선택한 값에 따라 ChatOllama(로컬) 객체를 만들지, ChatOpenAI(외부 API) 객체를 만들지 동적으로 결정
 # temperature=0 설정은 AI가 창의적이기보다 **'사실에 기반한 정확한 답변'**을 하도록
-def get_llm_engine(llm_type, model_name, api_url=None, api_key=None):
-    if llm_type == "Local (Ollama)":
-        return ChatOllama(model=model_name, temperature=0)
-    else:
-        # 외부 API (OpenAI 규격 호환)
+def get_llm_engine(model_name, api_url=None, api_key=None):
+    base_url = api_url or os.getenv("OPENAI_BASE_URL")
+    api_key = api_key or os.getenv("OPENAI_API_KEY")
+
+    if base_url:
         return ChatOpenAI(
             model=model_name,
             openai_api_key=api_key if api_key else "no-key",
-            openai_api_base=api_url,
+            openai_api_base=base_url,
             temperature=0
         )
+    else:
+        return ChatOllama(model=model_name, temperature=0)
