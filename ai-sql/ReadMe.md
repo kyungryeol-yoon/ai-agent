@@ -12,7 +12,7 @@
 현대 소프트웨어 개발 환경에서 **API 명세(Swagger)**와 **데이터베이스 구조(SQL)**는 시시각각 변합니다. 본 프로젝트는 이러한 기술 자산을 AI가 실시간으로 학습하고 가이드하는 **'살아있는 문서'**를 지향합니다.
 
 * **Privacy First:** 사내 자산인 SQL 쿼리와 API 구조는 외부 유출이 치명적입니다. **Ollama**를 통해 모든 추론을 로컬(Internal Network) 내에서 완결합니다.
-* **Contextual Accuracy:** 단순 키워드 매칭의 한계를 넘어, **BGE-M3** 임베딩을 통해 문맥적 의미를 파악하여 가장 적절한 기술 정보를 매칭합니다.
+* **Contextual Accuracy:** 단순 키워드 매칭의 한계를 넘어, **OpenAI (또는 Ollama)** 임베딩을 통해 문맥적 의미를 파악하여 가장 적절한 기술 정보를 매칭합니다.
 * **Self-Correcting Logic:** **LangGraph**를 도입하여 AI가 스스로 자신의 답변을 검증하고, 부족할 경우 검색 전략을 수정하는 지능형 루프를 구현합니다.
 
 ---
@@ -22,7 +22,7 @@
 전체 시스템은 **[데이터 수집 -> 수치화 -> 저장 -> 추론 -> 검증 -> 응답]**의 6단계 파이프라인으로 구성됩니다.
 
 1. **Data Ingestion:** Swagger JSON, SQL DDL, 테이블 정의서 등을 로드하여 의미 있는 단위(Chunk)로 분할합니다.
-2. **Embedding (Vectorization):** `BAAI/bge-m3` 모델이 텍스트를 **1,024차원의 고차원 벡터**로 변환합니다.
+2. **Embedding (Vectorization):** 선택된 모델(OpenAI 또는 로컬 Ollama)이 텍스트를 고차원 벡터로 변환합니다.
 3. **Vector Store:** 변환된 벡터와 원본 텍스트, 메타데이터를 **Chroma DB**에 인덱싱하여 저장합니다.
 4. **Reasoning (LangGraph):** 질문이 들어오면 질문의 카테고리를 분류(Router)하고, 검색된 정보의 관련성을 점수화(Grader)합니다.
 5. **Generation:** **Ollama(Llama3)**가 최종적으로 검증된 정보를 바탕으로 자연어 답변을 생성합니다.
@@ -33,8 +33,8 @@
 
 | 계층 | 기술명 | 상세 역할 및 선정 이유 |
 | --- | --- | --- |
-| **LLM Engine** | **Ollama (Llama3)** | 고성능 오픈소스 모델을 로컬에서 구동. API 호출 비용이 없으며 보안성이 뛰어남. |
-| **Embedding** | **BGE-M3** | **Dense/Sparse/Multi-vector** 검색을 모두 지원하는 다재다능한 모델. 한국어와 기술 용어(SQL) 이해도가 최상위권임. |
+| **LLM Engine** | **Ollama / OpenAI** | 고성능 모델을 로컬 또는 클라우드 API로 구동. 유연한 인프라 선택 가능. |
+| **Embedding** | **OpenAI / Ollama** | 문맥 검색을 위한 임베딩 레이어. 환경 변수(`OPENAI_BASE_URL`)에 따라 동적으로 엔진 선택. |
 | **Vector DB** | **Chroma DB** | 임베딩 데이터와 메타데이터를 통합 관리하는 오픈소스 벡터 저장소. 로컬 영속성 관리가 매우 용이함. |
 | **Orchestration** | **LangChain / LangGraph** | 단순 체인(Chain)을 넘어, 상태(State)를 보존하고 조건부 분기(Edge)를 가진 복잡한 워크플로우 제어. |
 | **UI Framework** | **Streamlit** | Python 기반 웹 프레임워크. 데이터 시각화 및 대화형 인터페이스를 빠르게 구현. |
@@ -69,10 +69,9 @@ AI의 성능은 데이터 품질에 비례합니다.
 
 ### 2단계: 하이브리드 검색 구현 (Embedding)
 
-**BGE-M3**의 특징을 활용하여 두 가지 검색을 병행합니다.
+**OpenAI/Ollama**의 특징을 활용하여 검색을 수행합니다.
 
-* **Dense Search:** "유저 정보를 알고 싶어"라는 질문의 '의미'를 찾아냅니다.
-* **Sparse Search:** `USER_ID`, `PK_IDX` 같은 '특정 키워드'가 정확히 일치하는지 확인합니다.
+* **Dense Search:** 질문의 '의미'를 찾아내어 벡터 공간에서 유사한 문서를 검색합니다.
 
 ### 3단계: 지능형 RAG 체인 (Reranking & Logic)
 
@@ -97,8 +96,8 @@ ollama pull llama3
 
 ```bash
 # 핵심 라이브러리 설치
-pip install langchain langchain-openai langchain-ollama langchain-huggingface \
-            langchain-community chromadb streamlit langgraph sentence-transformers
+pip install langchain langchain-openai langchain-ollama \
+            langchain-community chromadb streamlit langgraph
 
 ```
 

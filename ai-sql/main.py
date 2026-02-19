@@ -25,7 +25,7 @@ with st.sidebar:
     # Swagger 동기화 UI
     sw_url = st.text_input("Swagger JSON URL")
     if st.button("지식베이스 동기화"):
-        emb = get_embeddings()
+        emb = get_embeddings(api_url, api_key)
         try:
             count = sync_swagger(sw_url, emb)
             st.success(f"{count}개 API 명세가 로드되었습니다!")
@@ -37,7 +37,7 @@ st.title("🛡️ Self-Correction API Assistant")
 st.caption("Swagger 문서를 바탕으로 AI가 판단하고 답변합니다.")
 
 # 모델 로드 (캐싱을 통해 속도 향상 가능하나 여기선 직관적으로 표현)
-embeddings = get_embeddings()
+embeddings = get_embeddings(api_url, api_key)
 llm = get_llm_engine(llm_type, m_name, api_url, api_key)
 app = create_retrieval_graph(embeddings, llm)
 
