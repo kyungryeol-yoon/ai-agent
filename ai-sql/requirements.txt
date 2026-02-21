@@ -5,3 +5,4 @@ streamlit
 langgraph
 langchain-openai
 langchain-chroma
+openai
